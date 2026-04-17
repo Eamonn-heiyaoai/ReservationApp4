@@ -1,0 +1,18 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/home/MyHome",
+    "pages/know/MyKnow",
+    "pages/message/MyMessage",
+    "pages/mine/MyMine",
+    "pages/restime/MyRestime",
+    "pages/mine/Login",
+    "pages/mine/Register",
+    "pages/restime/Application",
+    "pages/restime/ResDetail",
+    "pages/restime/Reports",
+    "pages/mine/Update",
+    "pages/common/MyDetail",
+    "pages/common/YuyueList"
+  ]
+}

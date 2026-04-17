@@ -1,0 +1,145 @@
+{
+  "user": [
+    {
+      "username": "史珍香",
+      "password": "123",
+      "id": "101"
+    },
+    {
+      "username": "mary",
+      "password": "1234",
+      "id": "103"
+    },
+    {
+      "username": "Jerry",
+      "password": "1234",
+      "id": "104"
+    },
+    {
+      "username": "bean",
+      "password": "1234",
+      "mobile": "13901234567",
+      "id": "105"
+    },
+    {
+      "username": "abc",
+      "password": "1234",
+      "mobile": "111111111222222",
+      "id": "106"
+    },
+    {
+      "username": "abc",
+      "password": "1234",
+      "mobile": "111111111222222",
+      "id": "107"
+    },
+    {
+      "username": "abc",
+      "password": "1234",
+      "mobile": "111111111222222",
+      "id": "108"
+    },
+    {
+      "username": "kitty",
+      "password": "1234",
+      "mobile": "88888888",
+      "id": "109"
+    },
+    {
+      "username": "user",
+      "password": "123456",
+      "mobile": "12345678910",
+      "id": "f4zCYJ4o-sk"
+    },
+    {
+      "username": "user",
+      "password": "123456",
+      "mobile": "12345678910",
+      "id": "KWCnXdIkah8"
+    },
+    {
+      "username": "user",
+      "password": "123456",
+      "mobile": "12345678910",
+      "id": "jWxnuQ1cCCI"
+    },
+    {
+      "username": "user",
+      "password": "123456",
+      "mobile": "12345678910",
+      "id": "f-lact83yaA"
+    },
+    {
+      "username": "sb",
+      "password": "666",
+      "mobile": "666",
+      "id": "zLMnILwOD3k"
+    },
+    {
+      "username": "sb2",
+      "password": "123456",
+      "mobile": "123",
+      "id": "oO5iBwGDyg0"
+    },
+    {
+      "username": "sb2",
+      "password": "123456",
+      "mobile": "123",
+      "id": "L0AMvx3VFRY"
+    },
+    {
+      "username": "user1",
+      "password": "123456",
+      "mobile": "132456",
+      "id": "WqiU5Zc0GtE"
+    }
+  ],
+  "quicks": [
+    {
+      "id": "101",
+      "pic": "news1.png",
+      "title": "场馆动态"
+    },
+    {
+      "id": "102",
+      "pic": "news2.png",
+      "title": "运动常识"
+    },
+    {
+      "id": "103",
+      "pic": "meet1.png",
+      "title": "足球场预约"
+    },
+    {
+      "id": "104",
+      "pic": "meet2.png",
+      "title": "羽毛球馆预约"
+    },
+    {
+      "id": "105",
+      "pic": "meet3.png",
+      "title": "篮球场预约"
+    },
+    {
+      "id": "106",
+      "pic": "meet4.png",
+      "title": "乒乓球场预约"
+    },
+    {
+      "id": "107",
+      "pic": "meet5.png",
+      "title": "网球场预约"
+    },
+    {
+      "id": "108",
+      "pic": "meet6.png",
+      "title": "游泳馆预约"
+    },
+    {
+      "id": "109",
+      "pic": "meet7.png",
+      "title": "健身房预约"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
