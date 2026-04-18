@@ -90,23 +90,15 @@ export default class MyHttp {
           for(i;i<temp.length;i++){
             if (temp[i].password == password) {
               // 存储用户信息
-              AppStorage.setOrCreate<User>("user", temp[0]);
-              AppStorage.setOrCreate<string>('username', temp[0].username);
-              AppStorage.setOrCreate<string>('mobile', temp[0].mobile);
+              AppStorage.setOrCreate<User>("user", temp[i]);
+              AppStorage.setOrCreate<string>('username', temp[i].username);
+              AppStorage.setOrCreate<string>('mobile', temp[i].mobile);
+              AppStorage.setOrCreate<number>('Id', temp[i].id);
               resolve('ok')
               break;
             }
           }
           resolve('用户名或密码有误')
-          // if (temp[0].password == password) {
-          //   // 存储用户信息
-          //   AppStorage.setOrCreate<User>("user", temp[0]);
-          //   AppStorage.setOrCreate<string>('username', temp[0].username);
-          //   AppStorage.setOrCreate<string>('mobile', temp[0].mobile);
-          //   resolve('ok')
-          // } else {
-          //   resolve('用户名或密码有误')
-          // }
         }
       )
     })
@@ -156,6 +148,39 @@ export default class MyHttp {
    /**
     * 4.通过http实现用户资料修改
     */
+  static updateById(id: number, user: User): Promise<string>{
+    return new Promise<string>((resolve, reject) => {
+      let httpRequest = http.createHttp();
 
+      const updateData: Record<string, Object> = {};
+      if (user.username) updateData.username = user.username;
+      if (user.password) updateData.password = user.password;
+      if (user.mobile) updateData.mobile = user.mobile;
 
+      httpRequest.request(
+        MyHttp.baseUrl + `user/${id}`,
+        {
+          method: http.RequestMethod.PUT,
+          header: {
+            'Content-Type': 'application/json'
+          },
+          extraData: JSON.stringify(updateData),
+          connectTimeout: 3000,
+          readTimeout: 3000
+        },
+        (err, data) => {
+          if (err) {
+            console.error('HTTP 请求失败：', JSON.stringify(err));
+            reject(err);
+            return;
+          }
+          let updatedUser = JSON.parse(data.result.toString()) as User;
+          if (updatedUser && updatedUser.id === user.id) {
+            resolve('ok');
+          } else {
+            resolve('用户信息更新异常');
+          }
+      })
+    })
+  }
 }

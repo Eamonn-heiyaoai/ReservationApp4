@@ -1,5 +1,7 @@
 import { router } from '@kit.ArkUI';
+import { promptAction} from '@kit.ArkUI';
 import User from '../../entity/User';
+import  MyHttp from '../../utils/MyHttp'
 ////请修改为http方式与json-server方式来实现
 import UserDao from '../../utils/UserDao';
 
@@ -14,6 +16,7 @@ struct Update {
   @State username: string = '';
   @State mobile: string = '';
   @State password: string = '';
+  @State Id: number = 0;
   @State user: User | null = null;
 
   //初始用户信息
@@ -24,6 +27,7 @@ struct Update {
       this.username = this.user.username;
       this.password = this.user.password;
       this.mobile = this.user.mobile;
+      this.Id = this.user.id;
     }
   }
 
@@ -121,7 +125,14 @@ struct Update {
             this.user.password = this.password;
             this.user.mobile = this.mobile;
             //执行数据库修改
-            UserDao.updateById(this.user.id,this.user);
+            // UserDao.updateById(this.user.id,this.user);
+            MyHttp.updateById(this.Id,this.user).then((res)=>{
+              if(res==='ok'){
+                this.getUIContext().getRouter().pushUrl({url:'pages/mine/MyMine'})
+              }else{
+                promptAction.openToast({message:res})
+              }
+            })
           }
           //重新存入缓存
           AppStorage.setOrCreate<string>('username',this.username);
