@@ -28,7 +28,8 @@ export default struct Home { //导出,以便其它组件导入复用
       '2024-5-18')
   ]
    //声明远程服务器地址
-  private serverUrl: string = 'http://192.168.110.116:3000/';     //使用模拟器时使用该项
+  // private serverUrl: string = 'http://192.168.110.116:3000/';     //使用模拟器时使用该项
+  private serverUrl: string = 'http://10.5.86.185:3000/';
   // private serverUrl: string = `http://127.0.0.1:3000/`;           //若使用预览器则使用该项
   ////初始化数据////
  aboutToAppear():void{

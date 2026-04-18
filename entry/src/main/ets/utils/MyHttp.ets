@@ -1,6 +1,7 @@
 import http from '@ohos.net.http'
 import Quick from '../entity/Quick';
 import User from '../entity/User';
+import { httpManager } from './bakMyHttp';
 
 /**
  * @Date 2026-04-17
@@ -15,7 +16,8 @@ export default class MyHttp {
   // private static baseUrl: string = 'http://127.0.0.1:3000/'
   ////这里用ipconfig查询到真实IP后，改为你自己的IP地址，手机模拟器可用。
   // private static baseUrl: string = 'http://192.168.43.5:3000/'
-  private static baseUrl: string = 'http://192.168.110.116:3000/'
+  // private static baseUrl: string = 'http://192.168.110.116:3000/'
+  private static baseUrl: string = 'http://10.5.86.185:3000/'
   /**
    * 1.实现网络请求，查询金刚区所有图片文件
    */
@@ -52,79 +54,103 @@ export default class MyHttp {
    */
   static login(username: string, password: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      //////1.创建请求对象
       let httpRequest = http.createHttp();
-      //////2.服务器请求
-      httpRequest.request(MyHttp.baseUrl + 'user', {
-        method: http.RequestMethod.GET,
-        header: {
-          'Content-Type': 'application/json'
+      // ✅ 修改：使用查询字符串传递参数
+      const params: Record<string, string> = {
+        'username':username
+      };
+      let fullUrl = MyHttp.baseUrl + 'user';
+      if (params) {
+        const queryString = Object.keys(params)
+          .map(key => `${key}=${params[key]}`)
+          .join('&');
+        fullUrl += (MyHttp.baseUrl.includes('?') ? '&' : '?') + queryString;
+      }
+      httpRequest.request(
+        fullUrl,
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            'Content-Type': 'application/json'
+          },
+          connectTimeout: 3000,
+          readTimeout: 3000
         },
-        extraData: {
-          //外部数据
-          username: username,
-          password: password
-        }
-      }, (err, data) => { //异常判断
-        if (err) { //系统有误
-          reject(err)
-          return;
-        }else{
-          //系统正常,拿到json字符串数组转成数组[{username:'tom',password:'1234',mobile:'13127683502'}]
-          //data.result->返回[]或[{id:1002,username:'tom',password:'1234',mobile:'13127683502'}]
-          let temp = JSON.parse(data.result.toString()) as Array<User>;
-          // resolve(data.result.toString());
-          //判断是否查询到此用户
-          if (temp.length > 0) {
-            //存储用户信息,是数组第一个元素，以后修改用户信息
-            AppStorage.setOrCreate<User>("user",temp[0]);
-            resolve('ok')
-          } else {
-            resolve('用户名或密码有误')
+        (err, data) => {
+          if (err) {
+            reject(err)
+            return;
           }
+          // resolve(fullUrl)
+          // resolve(data.result.toString() + fullUrl)
+          let temp = JSON.parse(data.result.toString()) as Array<User>;
+          // resolve(temp[0].password)
+          // resolve(data.result.toString() + fullUrl)
+          let i = 0;
+          for(i;i<temp.length;i++){
+            if (temp[i].password == password) {
+              // 存储用户信息
+              AppStorage.setOrCreate<User>("user", temp[0]);
+              AppStorage.setOrCreate<string>('username', temp[0].username);
+              AppStorage.setOrCreate<string>('mobile', temp[0].mobile);
+              resolve('ok')
+              break;
+            }
+          }
+          resolve('用户名或密码有误')
+          // if (temp[0].password == password) {
+          //   // 存储用户信息
+          //   AppStorage.setOrCreate<User>("user", temp[0]);
+          //   AppStorage.setOrCreate<string>('username', temp[0].username);
+          //   AppStorage.setOrCreate<string>('mobile', temp[0].mobile);
+          //   resolve('ok')
+          // } else {
+          //   resolve('用户名或密码有误')
+          // }
         }
-      })//request-end
-    })//promise-end
+      )
+    })
   }
+
 
   /**
    * 3.用户注册
    */
-  static register(user: User): Promise<string> { //泛型string是实际返回数据类型
-    return new Promise<string>((resolve, reject) => { //lamda表达式函数
-      /////1.创建请求对象
+  static register(user: User): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
       let httpRequest = http.createHttp();
-      /////2.发送请求，服务器的请求方法(url,{      },(err,data)=>{ })
-      //(地址+表名,请求配置对象{ },回调函数(err,data)=>{ })
+
       httpRequest.request(MyHttp.baseUrl + 'user', {
-        //请求配置对象
-        method: http.RequestMethod.POST, //请求的方式
+        method: http.RequestMethod.POST,
         header: {
-          //请求头对象
           'Content-Type': 'application/json'
         },
-        extraData: {
-          //传递的数据,此处为user对象,不需要传id号
-          //传注册的数据
+        // ✅ 修改：extraData 应该是 JSON 字符串
+        extraData: JSON.stringify({
           username: user.username,
           password: user.password,
           mobile: user.mobile
-        }
-      }, (err, data) => { //异常判断
-        if (err) { //系统有误,返回错误
+        }),
+        connectTimeout: 3000,
+        readTimeout: 3000
+      }, (err, data) => {
+        if (err) {
           reject(err)
           return;
         }
-        //系统正常,拿到json字符串数组转成数组
-        let temp = JSON.parse(data.result.toString()) as Array<string>;
-        //判断是否查询到此用户
-        if (temp.length > 0) {
+
+        // ✅ 修改：POST 成功返回的是创建的对象，不是数组
+        let createdUser = JSON.parse(data.result.toString()) as User;
+        // resolve(data.result.toString())
+        // resolve(createdUser.username)
+        // 检查是否有 id 属性，说明创建成功
+        if (createdUser && createdUser.id) {
           resolve('ok')
         } else {
           resolve('用户注册有误')
         }
-      })//request-end
-    })//promise-end
+      })
+    })
   }
   /////////////////以下实现更新方法///////////////////
    /**
