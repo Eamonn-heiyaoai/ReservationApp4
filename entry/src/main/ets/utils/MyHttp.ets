@@ -16,8 +16,8 @@ export default class MyHttp {
   // private static baseUrl: string = 'http://127.0.0.1:3000/'
   ////这里用ipconfig查询到真实IP后，改为你自己的IP地址，手机模拟器可用。
   // private static baseUrl: string = 'http://192.168.43.5:3000/'
-  // private static baseUrl: string = 'http://192.168.110.116:3000/'
-  private static baseUrl: string = 'http://10.5.86.185:3000/'
+  private static baseUrl: string = 'http://192.168.110.116:3000/'
+  // private static baseUrl: string = 'http://10.5.86.185:3000/'
   /**
    * 1.实现网络请求，查询金刚区所有图片文件
    */

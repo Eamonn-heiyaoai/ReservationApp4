@@ -18,6 +18,7 @@ export default struct App {
   ////2.声明变量与对象
   //当前点击按钮的索引号，名称:类型
   @State currentIndex: number = 0;
+  @Provide('appNavStack') navPathStack: NavPathStack = new NavPathStack()
   //创建Tabs的控制器对象
   private tabsController: TabsController = new TabsController();
 
@@ -50,36 +51,38 @@ export default struct App {
 
   //生成UI
   build() {
-    //调用选项卡布局，传对象：{导航条位置,控制器}
-    Tabs({ barPosition: BarPosition.End, controller: this.tabsController }) { //选项卡父布避
-      //1.首页组件
-      TabContent() { //选项目内容布局
-        Home()
-      }.tabBar(this.buildTabs('首页', 0, $rawfile('tabs/home_cur.png'), $rawfile('tabs/home.png')))
+    Navigation(this.navPathStack){
+      //调用选项卡布局，传对象：{导航条位置,控制器}
+      Tabs({ barPosition: BarPosition.End, controller: this.tabsController }) { //选项卡父布避
+        //1.首页组件
+        TabContent() { //选项目内容布局
+          Home()
+        }.tabBar(this.buildTabs('首页', 0, $rawfile('tabs/home_cur.png'), $rawfile('tabs/home.png')))
 
-      //2.场馆动态组件
-      TabContent() { //选项目内容布局
-        Message()
-      }.tabBar(this.buildTabs('场馆动态', 1, $rawfile('tabs/msg_cur.png'), $rawfile('tabs/msg.png')))
+        //2.场馆动态组件
+        TabContent() { //选项目内容布局
+          Message()
+        }.tabBar(this.buildTabs('场馆动态', 1, $rawfile('tabs/msg_cur.png'), $rawfile('tabs/msg.png')))
 
-      //3.运动常识组件
-      TabContent() { //选项目内容布局
-        Know()
-      }.tabBar(this.buildTabs('运动常识', 2, $rawfile('tabs/know_cur.png'), $rawfile('tabs/know.png')))
+        //3.运动常识组件
+        TabContent() { //选项目内容布局
+          Know()
+        }.tabBar(this.buildTabs('运动常识', 2, $rawfile('tabs/know_cur.png'), $rawfile('tabs/know.png')))
 
-      //4.健身预约组件
-      TabContent() { //选项目内容布局
-        Restime()
-      }.tabBar(this.buildTabs('场馆预约', 3, $rawfile('tabs/restime_cur.png'), $rawfile('tabs/restime.png')))
+        //4.健身预约组件
+        TabContent() { //选项目内容布局
+          Restime()
+        }.tabBar(this.buildTabs('场馆预约', 3, $rawfile('tabs/restime_cur.png'), $rawfile('tabs/restime.png')))
 
-      //5.个人中心组件
-      TabContent() { //选项目内容布局
-        Mine()
-      }.tabBar(this.buildTabs('我的', 4, $rawfile('tabs/mine_cur.png'), $rawfile('tabs/mine.png')))
-    } //tabs-end
-    .onChange((index: number) => { //实现手势功能
-      //将滑动后拿到索引号赋值给当前索引变量。
-      this.currentIndex = index;
-    })
+        //5.个人中心组件
+        TabContent() { //选项目内容布局
+          Mine()
+        }.tabBar(this.buildTabs('我的', 4, $rawfile('tabs/mine_cur.png'), $rawfile('tabs/mine.png')))
+      } //tabs-end
+      .onChange((index: number) => { //实现手势功能
+        //将滑动后拿到索引号赋值给当前索引变量。
+        this.currentIndex = index;
+      })
+    }.hideTitleBar(true)
   } //buld-end
 }

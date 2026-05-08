@@ -1,0 +1,45 @@
+{
+  "routerMap": [
+    {
+      "name": "login",
+      "pageSourceFile": "src/main/ets/pages/mine/Login.ets",
+      "buildFunction": "LoginBuilder"
+    },
+    {
+      "name": "register",
+      "pageSourceFile": "src/main/ets/pages/mine/Register.ets",
+      "buildFunction": "RegisterBuilder"
+    },
+    {
+      "name": "application",
+      "pageSourceFile": "src/main/ets/pages/restime/Application.ets",
+      "buildFunction": "ApplicationBuilder"
+    },
+    {
+      "name": "res_detail",
+      "pageSourceFile": "src/main/ets/pages/restime/ResDetail.ets",
+      "buildFunction": "ResDetailBuilder"
+    },
+    {
+      "name": "reports",
+      "pageSourceFile": "src/main/ets/pages/restime/Reports.ets",
+      "buildFunction": "ReportsBuilder"
+    },
+    {
+      "name": "update",
+      "pageSourceFile": "src/main/ets/pages/mine/Update.ets",
+      "buildFunction": "UpdateBuilder"
+    },
+    {
+      "name": "detail",
+      "pageSourceFile": "src/main/ets/pages/common/MyDetail.ets",
+      "buildFunction": "MyDetailBuilder"
+    },
+    {
+      "name": "book_list",
+      "pageSourceFile": "src/main/ets/pages/common/YuyueList.ets",
+      "buildFunction": "YuyueListBuilder"
+    }
+  ]
+}
+

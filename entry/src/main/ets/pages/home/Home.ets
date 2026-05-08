@@ -27,6 +27,7 @@ export default struct Home { //导出,以便其它组件导入复用
       "有些跑者换上装备就直接开跑，没有做充分的热身运动，这样抽筋，跟腱酸痛等毛病会很容易找上门。开始运动时，可以做循序渐进的方式，原地踏步，随后进行跨步，最后在活动一下各关节，这样就能降低跑步受伤的概率。",
       '2024-5-18')
   ]
+  @Consume('appNavStack') navPathStack: NavPathStack;
    //声明远程服务器地址
   // private serverUrl: string = 'http://192.168.110.116:3000/';     //使用模拟器时使用该项
   private serverUrl: string = 'http://10.5.86.185:3000/';
@@ -82,18 +83,19 @@ export default struct Home { //导出,以便其它组件导入复用
                 let hot = new Hot("ad4", "去健身房锻炼时关注这些问题，做到文明健身!",
                   "在健身房锻炼的时候，我们除了要文明健身外，还需要知道科学的健身流程，避免盲目瞎练。", '2024-5-20');
                 //创建传参对象
-                let myparams: MyParams = {
-                  myIndex: 0,
-                  obj: hot
-                }
-                ////路由传递的必须是一个对象
-                this.getUIContext().getRouter().pushUrl({ url: 'pages/message/MyMessage', params: myparams });
+                let myparams = new MyParams()
+                myparams.title = '场馆动态'
+                myparams.jsonstr = JSON.stringify(hot)
+                this.navPathStack.pushPathByName('detail', myparams)
               } else if (index == 1) { //运动常识
-                this.getUIContext().getRouter().pushUrl({ url: 'pages/know/MyKnow', params: { myIndex: '1' } })
+                let params = new MyParams()
+                params.title = '运动常识'
+                params.jsonstr = JSON.stringify(this.hots[0])
+                this.navPathStack.pushPathByName('detail', params)
               } else { //其它为场馆预约,索引号要减2,表示去除场馆动态与运动常识的索引
-                this.getUIContext()
-                  .getRouter()
-                  .pushUrl({ url: 'pages/common/YuyueList', params: { myIndex: (index - 2) } })
+                let params = new MyParams()
+                params.myIndex = index - 2
+                this.navPathStack.pushPathByName('book_list', params)
               }
             })
           }) //fore
@@ -151,9 +153,10 @@ export default struct Home { //导出,以便其它组件导入复用
           .onClick(() => { //去运动常识详情
             //通过当前对象的上下文对象Context的getRouter()放法获取系统自带路由对象router
             //再通过router对象的pushUrl实现跳转并传参
-            this.getUIContext()
-              .getRouter()
-              .pushUrl({ url: 'pages/common/MyDetail', params: { title: '运动常识', jsonstr: JSON.stringify(item) } })
+            let params = new MyParams()
+            params.title = '运动常识'
+            params.jsonstr = JSON.stringify(item)
+            this.navPathStack.pushPathByName('detail', params)
           })
           .height('58%')
           .align(Alignment.Start)

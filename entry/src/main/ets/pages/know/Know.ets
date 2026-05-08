@@ -1,5 +1,6 @@
 //导入公共的类
 import Knowlanguage from '../../entity/News';
+import MyParams from '../../entity/MyParams'
 //过时的路由对象，请修改改为最新路由方式
 //import {router} from '@kit.ArkUI';
 /**
@@ -9,6 +10,7 @@ import Knowlanguage from '../../entity/News';
 @Preview
 export default struct Know {
   @State message: string = '运动常识'
+  @Consume('appNavStack') navPathStack: NavPathStack;
   //动态显示返回按钮
   @State flag: Visibility = Visibility.Hidden
   ////声明对象数组,测试数据
@@ -32,9 +34,7 @@ export default struct Know {
           .fontSize(30)
           .fontWeight(FontWeight.Bold)
           .fontColor(Color.White)
-          .onClick(() => { //返回
-            this.getUIContext().getRouter().back();
-          })
+          .visibility(Visibility.Hidden)
         Text(this.message)
           .width('90%')
           .height('100%')
@@ -79,7 +79,10 @@ export default struct Know {
           .padding(10)
           .onClick(() => { //去显示运动详情
             //router路由对象已过时，请使用最新API去实现
-          this.getUIContext().getRouter().pushUrl({ url: 'pages/common/MyDetail', params: { title: '运动常识', jsonstr: JSON.stringify(item) } })
+            let params = new MyParams()
+            params.title = '运动常识'
+            params.jsonstr = JSON.stringify(item)
+            this.navPathStack.pushPathByName('detail', params)
           })
         })
         ////list-end

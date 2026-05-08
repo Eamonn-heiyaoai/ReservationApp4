@@ -1,14 +1,18 @@
 import Restime from './Restime';
-/**
- * 导入预约时间
- */
+
 @Entry
 @Component
-struct MyRestime{
-  build(){
-    Row() {
-      Restime();
-    }.width('100%')
-    .height('100%')
+struct MyRestime {
+  @Provide('appNavStack') navPathStack: NavPathStack = new NavPathStack()
+
+  build() {
+    Navigation(this.navPathStack) {
+      Row() {
+        Restime()
+      }
+      .width('100%')
+      .height('100%')
+    }
+    .hideTitleBar(true)
   }
 }

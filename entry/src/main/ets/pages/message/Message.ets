@@ -1,5 +1,6 @@
 //导入公共的类
 import Msg from '../../entity/News';
+import MyParams from '../../entity/MyParams'
 /**
  * 场馆动态组件
  */
@@ -7,6 +8,7 @@ import Msg from '../../entity/News';
 @Component
 export default struct Message {
   @State message: string = '场馆动态'
+  @Consume('appNavStack') navPathStack: NavPathStack;
   //用于动态显示返回按钮
   // @State flag: Visibility = Visibility.Hidden
   //测试数据
@@ -33,9 +35,7 @@ export default struct Message {
           .fontWeight(FontWeight.Bold)
           .fontColor(Color.White)
           //  .visibility(this.flag) //根据路由传参动态设置
-          .onClick(() => { //返回
-            this.getUIContext().getRouter().back();
-          })
+          .visibility(Visibility.Hidden)
         Text(this.message)
           .width('90%')
           .height('100%')
@@ -79,7 +79,10 @@ export default struct Message {
           .padding(10).onClick(()=>{//去场馆消息
             //路由对象切换并传参，参数中所有属性的值都必须是字符串，如果不是字符串是一个对象则需要通过JSON.stringify(对象名)
             //将对象转换类为json字符串
-            this.getUIContext().getRouter().pushUrl({url:'pages/common/MyDetail',params:{title:'场馆动态',jsonstr:JSON.stringify(item)}})
+            let params = new MyParams()
+            params.title = '场馆动态'
+            params.jsonstr = JSON.stringify(item)
+            this.navPathStack.pushPathByName('detail', params)
           })
         })
         ////list-end

@@ -5,14 +5,18 @@ import { promptAction } from '@kit.ArkUI';
 /**
  * 用户所有预约信息
  */
-@Entry
+@Builder
+export function ReportsBuilder(){
+  Reports()
+}
+
 @Component
 struct Reports {
   @State message: string = '所有预约'
   ////保存用户所有预约信息
   @State curPlayers: Player[] | null = null;
   //创建动态路径栈对象
-  @State navPath: NavPathStack = new NavPathStack();
+  private navPath: NavPathStack = new NavPathStack();
 
   //查询当前用户所有预约信息
   aboutToAppear() {
@@ -52,7 +56,7 @@ struct Reports {
           Text('去预约').fontSize(20).fontColor(Color.White).fontWeight(FontWeight.Bold)
             .onClick(() => { //去预约首页
               AppStorage.setOrCreate<string>('res', 'ok');
-              this.navPath.pushPath({ name: "restime" })
+              this.navPath.clear()
             })
         }.width('100%')
         .height('12%')
@@ -132,7 +136,7 @@ struct Reports {
             .fontSize(18)
             .onClick(() => {
               AppStorage.setOrCreate<string>('res', 'ok');
-              this.navPath.pushPath({ name: "restime" })
+              this.navPath.clear()
             })
         }
 

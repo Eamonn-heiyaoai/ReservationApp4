@@ -1,20 +1,10 @@
 //页面的切换有两种方式：
 // 系统的路由对象router(简洁,页面顶部与底部需要自定义)，Navigation导航组件(功能强大，自带顶部与底航条)。
 //导入导航子组件文件
-import Info from './TestInfo';
 //导入Player实体类
 import Player from '../../entity/Player'
 import PlayerDao from '../../utils/PlayerDao'
-
-//声明方法，获取当前登录的用户名
-function go() {
-  let uname = AppStorage.get('username') as string;
-  if (uname != undefined && uname != null && uname != "") {
-    return uname;
-  } else {
-    return '';
-  }
-}
+import MyParams from '../../entity/MyParams'
 
 /**
  * 关于我的组件
@@ -22,8 +12,10 @@ function go() {
 @Preview
 @Component
 export default struct Mine {
+  @Consume('appNavStack') navPathStack: NavPathStack;
   @State message: string = "您今天没有预约哦~";
-  @State username: string = ''; //调用函数
+  @StorageLink('username') @Watch('refreshMineState') username: string = ''; //调用函数
+  @StorageLink('mobile') @Watch('refreshMineState') mobile: string = '';
   //隐藏或显示预约按钮
   @State flag1: Visibility = Visibility.Visible;
   //隐藏或显示出示二维码接钮
@@ -36,7 +28,6 @@ export default struct Mine {
   @State login: string = '用户登录';
   @State loginColor: string = '#fff';
   ////导航路径栈,官方建议通过Navigation实现跳转,用于替代router,进阶课程将全面应用它///
-  private navpath: NavPathStack = new NavPathStack();
 
   //Navigation导航组件，要求声明切换到目标页面的函数
   @Builder
@@ -44,23 +35,32 @@ export default struct Mine {
     //指定的页面名称
     if (name == 'info') {
       //加载目标组件页面
-      Info();
+      Text('Navigation')
     }
   }
 
   //初始化预约数据,注意组件生命周期的特点,不能用aboutappear
   aboutToAppear() {
-    //取已登录过的用户
-    this.username = go();
+    this.refreshMineState()
+  }
+
+  refreshMineState() {
     //获取登录用户的手机号,以便获得报名信息
-    let mobile = AppStorage.get<string>('mobile') as string;
+    let mobile = this.mobile;
     if (this.username != '') {
       this.login = "用户退出"
       this.loginColor = '#fcc';
-      if (mobile != undefined) {
+      this.message = '您今天没有预约哦！';
+      this.flag1 = Visibility.Visible;
+      this.flag2 = Visibility.None;
+      this.curPlayer = null;
+      if (mobile != undefined && mobile != null && mobile != '') {
         ////修改为通过http请示：查询json-server服务器拿到数据////
         //查询内置SQLite数据库,用户所有的预约信息,注意此下的调用方式
         PlayerDao.queryAll(mobile).then((data) => {
+          if (this.username == '' || this.mobile != mobile) {
+            return;
+          }
           if (data.length > 0) { //直接将数据提供给UI
             for (let i = 0; i < data.length; i++) {
               if (data[i].state == '进行中') {
@@ -70,6 +70,11 @@ export default struct Mine {
                 this.flag2 = Visibility.Visible;
                 break;
               }
+            }
+            if (this.curPlayer == null) {
+              this.message = '您今天没有预约哦！';
+              this.flag1 = Visibility.Visible;
+              this.flag2 = Visibility.None;
             }
           } else {
             this.message = '您今天没有预约哦！';
@@ -83,14 +88,15 @@ export default struct Mine {
       this.flag2 = Visibility.None;
       this.login = "用户登录"
       this.loginColor = '#fff';
+      this.curPlayer = null;
+      this.message = '您今天没有预约哦！';
     }
   }
 
   ////构建UI
   build() {
     ////使用一下官方推荐的导航组件Navigation实现跳转,在进阶课程将完全使用此组件////
-    Navigation(this.navpath) {
-      Column() {
+    Column() {
         //生成当前用户对应的二维码
         Column() {
           //将当前用户报名信息生成二维码
@@ -141,7 +147,7 @@ export default struct Mine {
               Button('没有账号，马上注册').margin({ top: 15 }).fontSize(18).backgroundColor(Color.Grey)
                 .onClick(() => {
                   //路由跳转切换页面
-                  this.getUIContext().getRouter().pushUrl({ url: 'pages/mine/Register' })
+                  this.navPathStack.pushPathByName('register', new MyParams())
                 })
               Button(this.login)
                 .fontSize(20)
@@ -152,7 +158,7 @@ export default struct Mine {
                 .fontColor(this.loginColor)
                 .onClick(() => {
                   if (this.login == '用户登录') { //登录
-                    this.getUIContext().getRouter().pushUrl({ url: 'pages/mine/Login' })
+                    this.navPathStack.pushPathByName('login', new MyParams())
                   } else {
                     ////重置为初始状态
                     this.username = '';
@@ -227,7 +233,7 @@ export default struct Mine {
             if (this.username == '' || this.username == null || this.username == undefined) {
               AlertDialog.show({ title: '查询提示', message: '请先登录后再查询！' })
             } else { //我的报告
-              this.getUIContext().getRouter().pushUrl({ url: 'pages/mine/Reports' })
+              this.navPathStack.pushPathByName('reports', new MyParams())
             }
           })
 
@@ -246,7 +252,7 @@ export default struct Mine {
               //最的对话框，需要通过上下文对象来取
               this.getUIContext().showAlertDialog({ title: '登录提示', message: '请您先登录后再进行修改!' })
             } else { //我的更新
-              this.getUIContext().getRouter().pushUrl({ url: 'pages/mine/Update' })
+              this.navPathStack.pushPathByName('update', new MyParams())
             }
           })
         }
@@ -288,7 +294,7 @@ export default struct Mine {
           .onClick(() => {
             //通过导航组件跳转到下一页TestInfo：组件名,传递参数
             //name的值必须与pageMap方法中定义的name==“名称”中的名称一样
-            this.navpath.pushPath({ name: 'info', param: '你好DeepSeek!' })
+            this.getUIContext().showAlertDialog({ title: 'Navigation', message: '当前项目已使用全局Navigation路由栈' })
             //或者
             //this.navpath.pushPathByName('Info','你好DeepSeek!');
           })
@@ -305,12 +311,9 @@ export default struct Mine {
       .height('100%')
       .alignSelf(ItemAlign.Center);
       ////目标导航组件设置,传一个跳转方法名,不能带()////
-    }.navDestination(this.pageMap)
+    }
     ///隐藏菜单标题
-    .hideTitleBar(true)
     ///隐藏底部导航条
-    .hideToolBar(true)
     //标题模式，这里是全屏模式:free,mini
-    .titleMode(NavigationTitleMode.Full)
-  } //build
+   //build
 }

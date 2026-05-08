@@ -1,3 +1,5 @@
+import MyParams from '../../entity/MyParams'
+
 /**
  * 场馆实体
  */
@@ -28,6 +30,8 @@ export default struct Restime {
   @State rd: string = '';
   //设置一个当前的日期,以便再次返回时匹配上
   @State curDate: Date = new Date();
+
+  @Consume('appNavStack') navPathStack: NavPathStack;
   //测试数据,声明待预约场馆信息
   private myReservations: Array<MyReservation> = [
     new MyReservation('play1', '足球场预约'),
@@ -85,7 +89,7 @@ export default struct Restime {
           .height('100%')
           .padding({ right: 10 })
           .onClick(() => {
-            this.getUIContext().getRouter().pushUrl({ url: 'pages/mine/Login' })
+            this.navPathStack.pushPathByName('login', new MyParams())
           })
       }.width('100%')
       .height('12%')
@@ -154,9 +158,10 @@ export default struct Restime {
             let username = AppStorage.get<string>('username');
             if (username != null && username != undefined && username != '') {
               //跳转到报名页：传场馆名,预约日期
-              this.getUIContext()
-                .getRouter()
-                .pushUrl({ url: 'pages/restime/Application', params: { rname: item.name, rd: this.rd } })
+              let params = new MyParams()
+              params.rname = item.name
+              params.rd = this.rd
+              this.navPathStack.pushPathByName('application', params)
             } else {
               //系统对话框
               this.getUIContext().getPromptAction().showToast({
