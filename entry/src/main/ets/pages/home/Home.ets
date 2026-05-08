@@ -28,10 +28,6 @@ export default struct Home { //导出,以便其它组件导入复用
       '2024-5-18')
   ]
   @Consume('appNavStack') navPathStack: NavPathStack;
-   //声明远程服务器地址
-  // private serverUrl: string = 'http://192.168.110.116:3000/';     //使用模拟器时使用该项
-  private serverUrl: string = 'http://10.5.86.185:3000/';
-  // private serverUrl: string = `http://127.0.0.1:3000/`;           //若使用预览器则使用该项
   ////初始化数据////
  aboutToAppear():void{
     ////获取json-server服务器的数据/////
@@ -70,7 +66,7 @@ export default struct Home { //导出,以便其它组件导入复用
                 ///////////金刚区的内容，这里为本加载////////////////
                 //Image($rawfile(`imgs/quicks/${item}.png`)).width(50).height(50)
                 ////////////金刚区的内容，通过http请求远程加载////////////////
-                Image(`${this.serverUrl}imgs/quicks/` + item.pic).width(50).height(50)
+                Image(myhttp.baseUrl + 'imgs/quicks/' + item.pic).width(50).height(50)
                 //标题
                 Text(item.title)
               }.padding({ top: 13 })
